@@ -1,9 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 
-function fileInFolder() { // определяет список вложенных файлов
-  const pathToFolder = path.join(__dirname, 'files') // путь к папке files
-  const pathToNewFolder = path.join(__dirname, 'files-copy') // путь для новой папки
+const pathToFolder = path.join(__dirname, 'files') // путь к папке files
+const pathToNewFolder = path.join(__dirname, 'files-copy') // путь для новой папки
+
+function fileInFolder(pathToFolder, pathToNewFolder) { // создает копию папки со всеми вложеными файлами
   fs.mkdir(path.join(pathToNewFolder), { recursive: true }, err => { if (err) throw err }) // создает новую папку
   fs.readdir(pathToFolder, { withFileTypes: true }, (err, files) => { // массив обьектов вложенных в папку
     files.forEach(file => { // перебор массива по обьектам
@@ -14,4 +15,4 @@ function fileInFolder() { // определяет список вложенны�
   })
 }
 
-fileInFolder()
+fileInFolder(pathToFolder, pathToNewFolder)
