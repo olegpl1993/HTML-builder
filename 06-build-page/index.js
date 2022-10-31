@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const pathToStyles = path.join(__dirname, 'styles')
+
 const pathToDist = path.join(__dirname, 'project-dist')
 
 function createDist() { // создает папку project-dist
@@ -9,6 +9,7 @@ function createDist() { // создает папку project-dist
 }
 
 async function styleBundler() { // делает бандл из CSS файлов и помещает в папку project-dist
+  const pathToStyles = path.join(__dirname, 'styles')
   fs.writeFile(path.join(pathToDist, 'bundle.css'), '', err => { }) // создает bundle CSS
   const arrCssText = []; // масив содержимого CSS файлов
   const arrFiles = await fs.promises.readdir(pathToStyles, { withFileTypes: true }) // массив обьектов вложенных в папку
@@ -22,8 +23,16 @@ async function styleBundler() { // делает бандл из CSS файлов
   arrCssText.forEach((data) => { fs.appendFile(path.join(pathToDist, 'bundle.css'), data, err => { }) }) // заполняет bundle CSS
 }
 
-function fileInFolder(pathToFolder, pathToNewFolder) { // создает копию паапки со всеми вложеными файлами
+function fileInFolder(pathToFolder, pathToNewFolder) { // создает копию папки со всеми вложеными файлами
   fs.mkdir(path.join(pathToNewFolder), { recursive: true }, err => { if (err) throw err }) // создает новую папку
+  // очищает папку если она осталась с предыдущего раза----------------
+  fs.readdir(pathToNewFolder, { withFileTypes: true }, (err, files) => { // массив обьектов вложенных в папку
+    files.forEach(file => { // перебор массива по обьектам
+      const newPathToFile = path.join(pathToNewFolder, file.name) // путь к файлу
+      fs.unlink(newPathToFile, err => { }) // удаляет файл
+    })
+  })
+  // заполняет папку новыми файлами --------------------------------------
   fs.readdir(pathToFolder, { withFileTypes: true }, (err, files) => { // массив обьектов вложенных в папку
     files.forEach(file => { // перебор массива по обьектам
       const pathToFile = path.join(pathToFolder, file.name) // путь к файлу
@@ -33,7 +42,7 @@ function fileInFolder(pathToFolder, pathToNewFolder) { // создает коп�
   })
 }
 
-function copyAssetsFolders() {
+function copyAssetsFolders() { // копирует папку assets со всем содержиным в папку project-dist
   const pathToAssets = path.join(__dirname, 'assets') // путь к папке assets
   const pathToFonts = path.join(pathToAssets, 'fonts')
   const pathToImg = path.join(pathToAssets, 'img')
@@ -51,9 +60,8 @@ function copyAssetsFolders() {
   fileInFolder(pathToSvg, pathToSvgCopy)
 }
 
-
 createDist(); // создает папку project-dist
 styleBundler(); // делает бандл из CSS файлов и помещает в папку project-dist
-copyAssetsFolders() // копирует папку assets со всем содержимым в папку project-dist
+copyAssetsFolders() // копирует папку assets со всем содержиным в папку project-dist
 
 // node 06-build-page
