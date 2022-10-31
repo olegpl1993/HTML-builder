@@ -8,10 +8,12 @@ function fileInFolder(pathToFolder, pathToNewFolder) { // создает коп�
   fs.mkdir(path.join(pathToNewFolder), { recursive: true }, err => { if (err) throw err }) // создает новую папку
   // очищает папку если она осталась с предыдущего раза----------------
   fs.readdir(pathToNewFolder, { withFileTypes: true }, (err, files) => { // массив обьектов вложенных в папку
-    files.forEach(file => { // перебор массива по обьектам
-      const newPathToFile = path.join(pathToNewFolder, file.name) // путь к файлу
-      fs.unlink(newPathToFile, err => { if (err) throw err }) // удаляет файл
-    })
+    if (files) { // проверка что массив файлов соществует
+      files.forEach(file => { // перебор массива по обьектам
+        const newPathToFile = path.join(pathToNewFolder, file.name) // путь к файлу
+        fs.unlink(newPathToFile, err => { if (err) throw err }) // удаляет файл
+      })
+    }
   })
   // заполняет папку новыми файлами --------------------------------------
   fs.readdir(pathToFolder, { withFileTypes: true }, (err, files) => { // массив обьектов вложенных в папку
